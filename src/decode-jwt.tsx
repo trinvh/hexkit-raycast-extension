@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import { runHexkit, openInHexkitApp, toastError } from "./lib/hexkit";
 import { readSeedText } from "./lib/seed";
 
+// `jwt.decode` returns header/payload as already-pretty JSON strings. We try
+// to parse them so we can re-pretty with our own formatting, but we still
+// render whatever the CLI gave us if the parse fails (the upstream string is
+// always a faithful representation of the token).
 interface JwtResult {
-  header?: unknown;
-  payload?: unknown;
-  signature?: string;
-  algorithm?: string;
+  header: string;
+  payload: string;
+  signature: string;
 }
 
 export default function Command() {
@@ -25,8 +28,13 @@ export default function Command() {
         return;
       }
       try {
-        const raw = await runHexkit<JwtResult>("jwt.decode", { input: seed });
-        setResult(typeof raw === "string" ? safeParse(raw) : raw);
+        const raw = await runHexkit<JwtResult>("jwt.decode", { token: seed });
+        if (typeof raw === "string") {
+          // CLI returned a raw string we couldn't parse — surface the error.
+          setError(`Couldn't parse jwt.decode output: ${raw.slice(0, 200)}`);
+        } else {
+          setResult(raw);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -35,23 +43,22 @@ export default function Command() {
     })();
   }, []);
 
-  const markdown = renderMarkdown(token, result, error);
-
   return (
     <Detail
       isLoading={loading}
-      markdown={markdown}
+      markdown={renderMarkdown(token, result, error)}
       actions={
         <ActionPanel>
-          {result?.payload != null && (
+          {result?.payload && (
             <Action.CopyToClipboard
               title="Copy Payload JSON"
-              content={JSON.stringify(result.payload, null, 2)}
+              content={result.payload}
             />
           )}
-          {token && (
-            <Action.CopyToClipboard title="Copy Token" content={token} />
+          {result?.header && (
+            <Action.CopyToClipboard title="Copy Header JSON" content={result.header} />
           )}
+          {token && <Action.CopyToClipboard title="Copy Token" content={token} />}
           {token && (
             <Action
               title="Open in Hexkit"
@@ -72,14 +79,6 @@ export default function Command() {
   );
 }
 
-function safeParse(raw: string): JwtResult | null {
-  try {
-    return JSON.parse(raw) as JwtResult;
-  } catch {
-    return null;
-  }
-}
-
 function renderMarkdown(token: string, result: JwtResult | null, error?: string): string {
   if (error) {
     return ["## Decode JWT failed", "", "```", error, "```"].join("\n");
@@ -93,15 +92,22 @@ function renderMarkdown(token: string, result: JwtResult | null, error?: string)
   }
   if (!result) return "";
   const lines: string[] = ["## Decoded JWT", ""];
-  if (result.algorithm) lines.push(`**Algorithm:** \`${result.algorithm}\``, "");
-  if (result.header !== undefined) {
-    lines.push("### Header", "", "```json", JSON.stringify(result.header, null, 2), "```", "");
+  if (result.header) {
+    lines.push("### Header", "", "```json", prettifyJsonString(result.header), "```", "");
   }
-  if (result.payload !== undefined) {
-    lines.push("### Payload", "", "```json", JSON.stringify(result.payload, null, 2), "```", "");
+  if (result.payload) {
+    lines.push("### Payload", "", "```json", prettifyJsonString(result.payload), "```", "");
   }
   if (result.signature) {
     lines.push("### Signature", "", "```", result.signature, "```");
   }
   return lines.join("\n");
+}
+
+function prettifyJsonString(jsonText: string): string {
+  try {
+    return JSON.stringify(JSON.parse(jsonText), null, 2);
+  } catch {
+    return jsonText;
+  }
 }

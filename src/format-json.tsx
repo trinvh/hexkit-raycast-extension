@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 import { runHexkit, openInHexkitApp, toastError } from "./lib/hexkit";
 import { readSeedText } from "./lib/seed";
 
+type Indent = "  " | "    " | "\t";
+
 interface State {
   loading: boolean;
   input: string;
   output: string;
   error?: string;
   sort: boolean;
-  indent: number;
+  indent: Indent;
 }
 
 export default function Command() {
@@ -18,25 +20,25 @@ export default function Command() {
     input: "",
     output: "",
     sort: false,
-    indent: 2,
+    indent: "  ",
   });
 
   useEffect(() => {
     void (async () => {
       const seed = await readSeedText();
-      await format(seed, state.indent, state.sort);
+      await format(seed, "  ", false);
     })();
-    // We only want this to run on mount; later option changes call format() directly.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function format(input: string, indent: number, sort: boolean) {
+  async function format(input: string, indent: Indent, sort: boolean) {
     if (!input.trim()) {
       setState({ loading: false, input, output: "", indent, sort });
       return;
     }
     setState((s) => ({ ...s, loading: true, input, indent, sort }));
     try {
+      // `json.format` returns the formatted JSON as a plain string.
       const result = await runHexkit<string>("json.format", { input, indent, sort });
       const output = typeof result === "string" ? result : JSON.stringify(result, null, indent);
       setState({ loading: false, input, output, indent, sort });
@@ -52,12 +54,10 @@ export default function Command() {
     }
   }
 
-  const markdown = renderMarkdown(state);
-
   return (
     <Detail
       isLoading={state.loading}
-      markdown={markdown}
+      markdown={renderMarkdown(state)}
       actions={
         <ActionPanel>
           {state.output && (
@@ -70,10 +70,10 @@ export default function Command() {
             onAction={() => format(state.input, state.indent, !state.sort)}
           />
           <Action
-            title={state.indent === 2 ? "Use 4-Space Indent" : "Use 2-Space Indent"}
+            title={state.indent === "  " ? "Use 4-Space Indent" : "Use 2-Space Indent"}
             icon={Icon.Text}
             shortcut={{ modifiers: ["cmd"], key: "i" }}
-            onAction={() => format(state.input, state.indent === 2 ? 4 : 2, state.sort)}
+            onAction={() => format(state.input, state.indent === "  " ? "    " : "  ", state.sort)}
           />
           <Action
             title="Open in Hexkit"

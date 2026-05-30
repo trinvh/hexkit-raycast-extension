@@ -59,10 +59,10 @@
     },
     {
       "name": "generate-uuid",
-      "title": "Generate UUID",
+      "title": "Generate ID",
       "subtitle": "Hexkit",
-      "description": "Generate a UUID v4 and copy it to the clipboard.",
-      "mode": "no-view",
+      "description": "Generate UUID v4 / v7, ULID or Nano ID — pick the kind from the action panel.",
+      "mode": "view",
       "icon": "extension-icon.png"
     },
     {
