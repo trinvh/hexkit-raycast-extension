@@ -1,0 +1,97 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "hexkit",
+  "title": "Hexkit",
+  "description": "Run Hexkit developer tools from Raycast — JSON, JWT, hashing, encoders and more, with one-key fallback to the desktop app.",
+  "icon": "extension-icon.png",
+  "author": "trinvh",
+  "categories": ["Developer Tools", "Productivity"],
+  "preferences": [
+    {
+      "name": "hexkitCliPath",
+      "title": "Hexkit CLI path",
+      "description": "Path to the `hexkit` binary. Leave as `hexkit` if it's on your PATH.",
+      "type": "textfield",
+      "required": false,
+      "default": "hexkit"
+    },
+    {
+      "name": "licenseKey",
+      "title": "License key",
+      "description": "Hexkit Pro license key (optional today, required for Pro features in the future).",
+      "type": "password",
+      "required": false,
+      "default": ""
+    }
+  ],
+  "commands": [
+    {
+      "name": "search-tools",
+      "title": "Search Tools",
+      "subtitle": "Hexkit",
+      "description": "Browse every Hexkit tool and open it in Raycast or the desktop app.",
+      "mode": "view",
+      "icon": "extension-icon.png"
+    },
+    {
+      "name": "format-json",
+      "title": "Format JSON",
+      "subtitle": "Hexkit",
+      "description": "Format JSON from clipboard or selected text, with key sorting and JSONPath filter options.",
+      "mode": "view",
+      "icon": "extension-icon.png"
+    },
+    {
+      "name": "decode-jwt",
+      "title": "Decode JWT",
+      "subtitle": "Hexkit",
+      "description": "Decode a JWT from clipboard or selection and inspect its header, payload and claims.",
+      "mode": "view",
+      "icon": "extension-icon.png"
+    },
+    {
+      "name": "hash-text",
+      "title": "Hash Text",
+      "subtitle": "Hexkit",
+      "description": "Hash text with MD5, SHA-1, SHA-256, SHA-384 or SHA-512.",
+      "mode": "view",
+      "icon": "extension-icon.png"
+    },
+    {
+      "name": "generate-uuid",
+      "title": "Generate UUID",
+      "subtitle": "Hexkit",
+      "description": "Generate a UUID v4 and copy it to the clipboard.",
+      "mode": "no-view",
+      "icon": "extension-icon.png"
+    },
+    {
+      "name": "open-hexkit",
+      "title": "Open Hexkit",
+      "subtitle": "Hexkit",
+      "description": "Open the Hexkit desktop app.",
+      "mode": "no-view",
+      "icon": "extension-icon.png"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.104.19",
+    "@raycast/utils": "^2.2.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "ray publish",
+    "make-icon": "node scripts/make-icon.mjs"
+  }
+}
