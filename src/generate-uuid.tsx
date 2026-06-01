@@ -1,96 +1,109 @@
-import { Action, ActionPanel, Detail, Icon } from "@raycast/api";
-import { useEffect, useState } from "react";
+import {
+  Action,
+  ActionPanel,
+  Detail,
+  Form,
+  Icon,
+  useNavigation,
+} from "@raycast/api";
+import { useState } from "react";
 import { runHexkit, openInHexkitApp, toastError } from "./lib/hexkit";
 
 type Kind = "uuid_v4" | "uuid_v7" | "ulid" | "nano_id";
 
-interface State {
-  loading: boolean;
+const KIND_LABEL: Record<Kind, string> = {
+  uuid_v4: "UUID v4 (random)",
+  uuid_v7: "UUID v7 (time-ordered)",
+  ulid: "ULID",
+  nano_id: "Nano ID",
+};
+
+interface FormValues {
   kind: Kind;
-  values: string[];
-  error?: string;
+  count: string; // Form values arrive as strings; we parse to int.
+  lowercased: boolean;
 }
 
 export default function Command() {
-  const [state, setState] = useState<State>({
-    loading: true,
-    kind: "uuid_v4",
-    values: [],
-  });
+  const { push } = useNavigation();
+  const [error, setError] = useState<string | undefined>();
 
-  useEffect(() => {
-    void roll("uuid_v4");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function roll(kind: Kind) {
-    setState((s) => ({ ...s, loading: true, kind }));
+  async function handleSubmit(values: FormValues) {
+    setError(undefined);
+    const count = Math.max(1, Math.min(50, Number.parseInt(values.count, 10) || 1));
     try {
-      // `id.generate` returns a JSON array of strings.
       const raw = await runHexkit<string[]>("id.generate", {
-        kind,
-        count: 5,
-        lowercased: false,
+        kind: values.kind,
+        count,
+        lowercased: values.lowercased,
       });
-      const values = Array.isArray(raw) ? raw : [String(raw)];
-      setState({ loading: false, kind, values });
+      const values_out = Array.isArray(raw) ? raw : [String(raw)];
+      push(<ResultDetail kind={values.kind} values={values_out} />);
     } catch (err) {
-      setState({
-        loading: false,
-        kind,
-        values: [],
-        error: err instanceof Error ? err.message : String(err),
-      });
+      setError(err instanceof Error ? err.message : String(err));
     }
   }
 
-  const primary = state.values[0];
-
   return (
-    <Detail
-      isLoading={state.loading}
-      markdown={renderMarkdown(state)}
+    <Form
       actions={
         <ActionPanel>
-          {primary && (
-            <Action.CopyToClipboard title="Copy First ID" content={primary} />
+          <Action.SubmitForm
+            title="Generate"
+            icon={Icon.PlusCircle}
+            onSubmit={handleSubmit}
+          />
+          <Action
+            title="Open in Hexkit"
+            icon={Icon.AppWindow}
+            shortcut={{ modifiers: ["cmd"], key: "o" }}
+            onAction={async () => {
+              try {
+                await openInHexkitApp("id.generate");
+              } catch (err) {
+                await toastError(err);
+              }
+            }}
+          />
+        </ActionPanel>
+      }
+    >
+      <Form.Dropdown id="kind" title="Kind" defaultValue="uuid_v4" error={error}>
+        {(Object.keys(KIND_LABEL) as Kind[]).map((kind) => (
+          <Form.Dropdown.Item key={kind} value={kind} title={KIND_LABEL[kind]} />
+        ))}
+      </Form.Dropdown>
+      <Form.TextField
+        id="count"
+        title="Count"
+        placeholder="1–50"
+        defaultValue="5"
+      />
+      <Form.Checkbox
+        id="lowercased"
+        label="Lowercase output (UUIDs only)"
+        defaultValue={false}
+      />
+    </Form>
+  );
+}
+
+function ResultDetail({ kind, values }: { kind: Kind; values: string[] }) {
+  const list = values.map((v) => `- \`${v}\``).join("\n");
+  return (
+    <Detail
+      markdown={[`## ${KIND_LABEL[kind]}`, "", list].join("\n")}
+      actions={
+        <ActionPanel>
+          {values[0] && (
+            <Action.CopyToClipboard title="Copy First ID" content={values[0]} />
           )}
-          {state.values.length > 1 && (
+          {values.length > 1 && (
             <Action.CopyToClipboard
-              title="Copy All IDs"
-              content={state.values.join("\n")}
+              title="Copy All"
+              content={values.join("\n")}
             />
           )}
-          <Action
-            title="Generate More"
-            icon={Icon.ArrowClockwise}
-            shortcut={{ modifiers: ["cmd"], key: "g" }}
-            onAction={() => void roll(state.kind)}
-          />
-          <Action
-            title="Use UUID v4"
-            icon={Icon.Dot}
-            shortcut={{ modifiers: ["cmd"], key: "1" }}
-            onAction={() => void roll("uuid_v4")}
-          />
-          <Action
-            title="Use UUID v7"
-            icon={Icon.Dot}
-            shortcut={{ modifiers: ["cmd"], key: "2" }}
-            onAction={() => void roll("uuid_v7")}
-          />
-          <Action
-            title="Use ULID"
-            icon={Icon.Dot}
-            shortcut={{ modifiers: ["cmd"], key: "3" }}
-            onAction={() => void roll("ulid")}
-          />
-          <Action
-            title="Use Nano ID"
-            icon={Icon.Dot}
-            shortcut={{ modifiers: ["cmd"], key: "4" }}
-            onAction={() => void roll("nano_id")}
-          />
           <Action
             title="Open in Hexkit"
             icon={Icon.AppWindow}
@@ -107,25 +120,4 @@ export default function Command() {
       }
     />
   );
-}
-
-function renderMarkdown(state: State): string {
-  if (state.error) {
-    return ["## Generate failed", "", "```", state.error, "```"].join("\n");
-  }
-  if (state.values.length === 0) return "Generating…";
-  const heading = {
-    uuid_v4: "UUID v4",
-    uuid_v7: "UUID v7",
-    ulid: "ULID",
-    nano_id: "Nano ID",
-  }[state.kind];
-  const list = state.values.map((v) => `- \`${v}\``).join("\n");
-  return [
-    `## ${heading}`,
-    "",
-    list,
-    "",
-    "_Press `⌘G` for more, `⌘1`–`⌘4` to change ID kind, `⌘O` to open Hexkit._",
-  ].join("\n");
 }

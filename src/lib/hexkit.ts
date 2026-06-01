@@ -42,7 +42,10 @@ function resolveCliPath(): string {
  */
 export async function runHexkit<T = unknown>(
   action: string,
-  params: Record<string, unknown> = {},
+  // `object` keeps interface-typed form values assignable without sprinkling
+  // `as Record<string, unknown>` casts at every call site — the value is
+  // JSON-serialised below, so structural shape doesn't matter at this layer.
+  params: object = {},
 ): Promise<T | string> {
   const bin = resolveCliPath();
   try {
@@ -85,11 +88,47 @@ function normalizeCliError(err: unknown, bin: string): Error {
  */
 export async function openInHexkitApp(
   action: string,
-  params: Record<string, string> = {},
+  params: Record<string, unknown> = {},
 ): Promise<void> {
-  const qs = new URLSearchParams(params).toString();
-  const url = `hexkit://${action}${qs ? `?${qs}` : ""}`;
-  await open(url);
+  const qs = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === "") continue;
+    // Booleans become "true"/"false", numbers stringify, strings pass through.
+    qs.set(key, typeof value === "string" ? value : String(value));
+  }
+  const queryString = qs.toString();
+  const url = `hexkit://${action}${queryString ? `?${queryString}` : ""}`;
+  try {
+    await open(url);
+  } catch (err) {
+    throw friendlyOpenError(err);
+  }
+}
+
+/**
+ * `hexkit://` is registered with macOS Launch Services via the bundled .app's
+ * Info.plist. `make dev` ships a raw debug binary with no Info.plist, so
+ * Launch Services has nothing to route the URL to and `open` returns
+ * "The file … can't be found." Translate that to actionable copy.
+ */
+function friendlyOpenError(err: unknown): Error {
+  const raw = err instanceof Error ? err.message : String(err);
+  const lower = raw.toLowerCase();
+  const looksLikeMissingHandler =
+    lower.includes("can't be found") ||
+    lower.includes("doesn't exist") ||
+    lower.includes("no application") ||
+    lower.includes("not found");
+  if (!looksLikeMissingHandler) return err instanceof Error ? err : new Error(raw);
+  return new Error(
+    "macOS couldn't open `hexkit://` — Hexkit isn't registered as a URL " +
+      "handler on this Mac yet. Build the app once with `pnpm tauri build` " +
+      "in the hexkit-devutils repo (or install a release from " +
+      "https://github.com/trinvh/hexkit/releases) so the .app's Info.plist " +
+      "claims the scheme. After that, deep links route to whichever Hexkit " +
+      "is installed — including the version you're iterating on via " +
+      "`make dev`.",
+  );
 }
 
 export async function toastError(err: unknown, title = "Hexkit error"): Promise<void> {

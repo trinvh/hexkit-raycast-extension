@@ -25,54 +25,79 @@
     }
   ],
   "commands": [
-    {
-      "name": "search-tools",
-      "title": "Search Tools",
-      "subtitle": "Hexkit",
-      "description": "Browse every Hexkit tool and open it in Raycast or the desktop app.",
-      "mode": "view",
-      "icon": "extension-icon.png"
-    },
-    {
-      "name": "format-json",
-      "title": "Format JSON",
-      "subtitle": "Hexkit",
-      "description": "Format JSON from clipboard or selected text, with key sorting and JSONPath filter options.",
-      "mode": "view",
-      "icon": "extension-icon.png"
-    },
-    {
-      "name": "decode-jwt",
-      "title": "Decode JWT",
-      "subtitle": "Hexkit",
-      "description": "Decode a JWT from clipboard or selection and inspect its header, payload and claims.",
-      "mode": "view",
-      "icon": "extension-icon.png"
-    },
-    {
-      "name": "hash-text",
-      "title": "Hash Text",
-      "subtitle": "Hexkit",
-      "description": "Hash text with MD5, SHA-1, SHA-256, SHA-384 or SHA-512.",
-      "mode": "view",
-      "icon": "extension-icon.png"
-    },
-    {
-      "name": "generate-uuid",
-      "title": "Generate ID",
-      "subtitle": "Hexkit",
-      "description": "Generate UUID v4 / v7, ULID or Nano ID — pick the kind from the action panel.",
-      "mode": "view",
-      "icon": "extension-icon.png"
-    },
-    {
-      "name": "open-hexkit",
-      "title": "Open Hexkit",
-      "subtitle": "Hexkit",
-      "description": "Open the Hexkit desktop app.",
-      "mode": "no-view",
-      "icon": "extension-icon.png"
-    }
+    { "name": "format-json", "title": "Format JSON", "subtitle": "Hexkit", "description": "Pretty-print JSON with optional key sorting.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "minify-json", "title": "Minify JSON", "subtitle": "Hexkit", "description": "Strip whitespace from a JSON document.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "query-json", "title": "Query JSON (JSONPath)", "subtitle": "Hexkit", "description": "Run a JSONPath expression against a JSON document.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "yaml-to-json", "title": "YAML → JSON", "subtitle": "Hexkit", "description": "Convert YAML to JSON.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "json-to-yaml", "title": "JSON → YAML", "subtitle": "Hexkit", "description": "Convert JSON to YAML.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "csv-to-json", "title": "CSV → JSON", "subtitle": "Hexkit", "description": "Convert CSV rows to a JSON array.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "json-to-csv", "title": "JSON → CSV", "subtitle": "Hexkit", "description": "Convert a JSON array of objects to CSV.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "php-to-json", "title": "PHP Serialized → JSON", "subtitle": "Hexkit", "description": "Parse a PHP serialize() string and emit JSON.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "json-to-php", "title": "JSON → PHP Serialized", "subtitle": "Hexkit", "description": "Convert a JSON value to PHP serialize() form.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "format-sql", "title": "Format SQL", "subtitle": "Hexkit", "description": "Pretty-print a SQL statement.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "beautify-xml", "title": "Beautify XML", "subtitle": "Hexkit", "description": "Re-indent an XML document.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "minify-xml", "title": "Minify XML", "subtitle": "Hexkit", "description": "Strip whitespace from an XML document.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "query-xml", "title": "Query XML (XPath)", "subtitle": "Hexkit", "description": "Evaluate an XPath expression against an XML document.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "html-to-jsx", "title": "HTML → JSX", "subtitle": "Hexkit", "description": "Convert HTML markup to React JSX.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "svg-to-css", "title": "SVG → CSS", "subtitle": "Hexkit", "description": "Convert SVG to a CSS-embedded data URI.", "mode": "view", "icon": "extension-icon.png" },
+
+    { "name": "encode-base64", "title": "Base64 Encode", "subtitle": "Hexkit", "description": "Encode text as Base64.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "decode-base64", "title": "Base64 Decode", "subtitle": "Hexkit", "description": "Decode Base64 to text.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "encode-url", "title": "URL Encode", "subtitle": "Hexkit", "description": "Percent-encode a string for use in URLs.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "decode-url", "title": "URL Decode", "subtitle": "Hexkit", "description": "Decode a percent-encoded URL or string.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "parse-url", "title": "Parse URL", "subtitle": "Hexkit", "description": "Break a URL into its scheme, host, path, query and fragment.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "encode-hex", "title": "Hex Encode", "subtitle": "Hexkit", "description": "Encode text as hexadecimal bytes.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "decode-hex", "title": "Hex Decode", "subtitle": "Hexkit", "description": "Decode hexadecimal bytes to text.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "encode-html", "title": "HTML Entity Encode", "subtitle": "Hexkit", "description": "Escape text for safe HTML embedding.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "decode-html", "title": "HTML Entity Decode", "subtitle": "Hexkit", "description": "Unescape HTML entities into plain text.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "escape-backslash", "title": "Backslash Escape", "subtitle": "Hexkit", "description": "Escape special characters with backslashes.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "unescape-backslash", "title": "Backslash Unescape", "subtitle": "Hexkit", "description": "Interpret backslash escapes back into raw characters.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "decode-jwt", "title": "Decode JWT", "subtitle": "Hexkit", "description": "Decode a JWT into header, payload and signature — and optionally verify with a secret.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "check-luhn", "title": "Luhn Check", "subtitle": "Hexkit", "description": "Validate a Luhn-checked number (credit card, IMEI, …) and propose the correct check digit.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "decode-tlv", "title": "Decode TLV", "subtitle": "Hexkit", "description": "Decode BER-TLV (EMV chip data) — opens the desktop tree view.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "decode-x509", "title": "Decode X.509", "subtitle": "Hexkit", "description": "Decode a PEM-encoded X.509 certificate — opens the desktop tool.", "mode": "view", "icon": "extension-icon.png" },
+
+    { "name": "convert-number-base", "title": "Number Base Converter", "subtitle": "Hexkit", "description": "Convert a number between binary, octal, decimal, hex and a custom base.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "convert-time", "title": "Unix Time Converter", "subtitle": "Hexkit", "description": "Convert between Unix timestamps and human dates.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "describe-cron", "title": "Describe Cron", "subtitle": "Hexkit", "description": "Parse a cron expression and explain it in English.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "convert-case", "title": "Case Converter", "subtitle": "Hexkit", "description": "Convert text to camelCase, snake_case, kebab-case, …", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "convert-color", "title": "Color Converter", "subtitle": "Hexkit", "description": "Convert a color between HEX, RGB, HSL, HSB, HWB and CMYK.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "convert-curl", "title": "cURL → Code", "subtitle": "Hexkit", "description": "Convert a curl command into a code snippet — opens the desktop tool.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "generate-jsoncode", "title": "JSON → Code (types)", "subtitle": "Hexkit", "description": "Generate type definitions from a JSON sample — opens the desktop tool.", "mode": "view", "icon": "extension-icon.png" },
+
+    { "name": "generate-uuid", "title": "Generate ID", "subtitle": "Hexkit", "description": "Generate UUID v4 / v7, ULID or Nano ID.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "inspect-id", "title": "Inspect ID", "subtitle": "Hexkit", "description": "Detect the kind, version and variant of an ID.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "hash-text", "title": "Hash Text", "subtitle": "Hexkit", "description": "Compute MD5, SHA-1, SHA-256, SHA-384 and SHA-512 digests.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "generate-random", "title": "Generate Random String", "subtitle": "Hexkit", "description": "Generate a random string with chosen character classes.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "generate-lorem", "title": "Generate Lorem Ipsum", "subtitle": "Hexkit", "description": "Generate placeholder words or paragraphs.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "generate-qr", "title": "Generate QR Code", "subtitle": "Hexkit", "description": "Generate a QR code — opens the desktop renderer.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "generate-card", "title": "Generate Test Card Number", "subtitle": "Hexkit", "description": "Generate Luhn-valid TEST credit card numbers (Visa, Mastercard, Amex, …).", "mode": "view", "icon": "extension-icon.png" },
+
+    { "name": "test-regexp", "title": "Test RegExp", "subtitle": "Hexkit", "description": "Test a regular expression against a string and list every match.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "replace-regexp", "title": "Replace with RegExp", "subtitle": "Hexkit", "description": "Apply a regex replacement (supports backreferences).", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "markdown-to-html", "title": "Markdown → HTML", "subtitle": "Hexkit", "description": "Render Markdown to HTML.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "preview-markdown", "title": "Preview Markdown", "subtitle": "Hexkit", "description": "Render Markdown side-by-side — opens the desktop preview.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "preview-html", "title": "Preview HTML", "subtitle": "Hexkit", "description": "Render HTML in a sandbox — opens the desktop preview.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "read-qr", "title": "Read QR Code", "subtitle": "Hexkit", "description": "Decode a QR image — opens the desktop picker.", "mode": "view", "icon": "extension-icon.png" },
+
+    { "name": "compare-diff", "title": "Compare Text (Diff)", "subtitle": "Hexkit", "description": "Diff two blocks of text (optionally as JSON or XML) — opens the desktop view.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "process-lines", "title": "Sort / Dedupe Lines", "subtitle": "Hexkit", "description": "Sort, reverse, dedupe and trim lines.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "inspect-string", "title": "Inspect String", "subtitle": "Hexkit", "description": "Show character, byte, word and line counts of a string.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "beautify-css", "title": "Beautify CSS / SCSS / Less", "subtitle": "Hexkit", "description": "Re-indent a stylesheet.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "minify-css", "title": "Minify CSS", "subtitle": "Hexkit", "description": "Strip whitespace from a stylesheet.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "beautify-html", "title": "Beautify HTML", "subtitle": "Hexkit", "description": "Re-indent an HTML document.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "minify-html", "title": "Minify HTML", "subtitle": "Hexkit", "description": "Strip whitespace from an HTML document.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "minify-javascript", "title": "Minify JavaScript", "subtitle": "Hexkit", "description": "Minify a JavaScript snippet.", "mode": "view", "icon": "extension-icon.png" },
+
+    { "name": "pgp-keygen", "title": "Generate PGP Key Pair", "subtitle": "Hexkit", "description": "Generate an Ed25519 + Curve25519 OpenPGP key pair — opens the desktop tool with the user ID prefilled.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "pgp-encrypt", "title": "PGP Encrypt", "subtitle": "Hexkit", "description": "Encrypt a message to an OpenPGP public key — opens the desktop tool with the plaintext prefilled.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "pgp-decrypt", "title": "PGP Decrypt", "subtitle": "Hexkit", "description": "Decrypt an OpenPGP message — opens the desktop tool with the ciphertext prefilled.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "pgp-sign", "title": "PGP Sign", "subtitle": "Hexkit", "description": "Produce a detached OpenPGP signature — opens the desktop tool with the data prefilled.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "pgp-verify", "title": "PGP Verify", "subtitle": "Hexkit", "description": "Verify a detached OpenPGP signature — opens the desktop tool with the data prefilled.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "pgp-encrypt-sign", "title": "PGP Encrypt and Sign", "subtitle": "Hexkit", "description": "Encrypt to a recipient and sign inline — opens the desktop tool with the plaintext prefilled.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "pgp-decrypt-verify", "title": "PGP Decrypt and Verify", "subtitle": "Hexkit", "description": "Decrypt an inline-signed PGP message and verify the embedded signature — opens the desktop tool with the ciphertext prefilled.", "mode": "view", "icon": "extension-icon.png" },
+
+    { "name": "open-hexkit", "title": "Open Hexkit", "subtitle": "Hexkit", "description": "Open the Hexkit desktop app.", "mode": "no-view", "icon": "extension-icon.png" }
   ],
   "dependencies": {
     "@raycast/api": "^1.104.19",

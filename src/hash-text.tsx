@@ -1,6 +1,7 @@
 import { Action, ActionPanel, Form, Icon, useNavigation, Detail } from "@raycast/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { runHexkit, openInHexkitApp, toastError } from "./lib/hexkit";
+import { readSeedText } from "./lib/seed";
 
 const ALGORITHMS = ["md5", "sha1", "sha256", "sha384", "sha512"] as const;
 type Algorithm = (typeof ALGORITHMS)[number];
@@ -15,17 +16,35 @@ interface HashResults {
 
 export default function Command() {
   const { push } = useNavigation();
-  const [input, setInput] = useState("");
-  const [algorithm, setAlgorithm] = useState<Algorithm>("sha256");
+  // `null` while we're still reading the clipboard so the Form defers its
+  // first render — Form.TextArea's `defaultValue` only honours the value
+  // present on the initial mount.
+  const [seed, setSeed] = useState<string | null>(null);
 
-  async function submit() {
+  useEffect(() => {
+    void readSeedText().then(setSeed);
+  }, []);
+
+  async function submit(values: { input: string; algorithm: Algorithm }) {
     try {
-      const raw = await runHexkit<HashResults>("hash.generate", { input });
+      const raw = await runHexkit<HashResults>("hash.generate", {
+        input: values.input,
+      });
       const results = typeof raw === "string" ? ({} as HashResults) : raw;
-      push(<HashResult input={input} algorithm={algorithm} results={results} />);
+      push(
+        <HashResult
+          input={values.input}
+          algorithm={values.algorithm}
+          results={results}
+        />,
+      );
     } catch (err) {
       await toastError(err);
     }
+  }
+
+  if (seed === null) {
+    return <Form isLoading />;
   }
 
   return (
@@ -37,7 +56,9 @@ export default function Command() {
             title="Open in Hexkit"
             icon={Icon.AppWindow}
             shortcut={{ modifiers: ["cmd"], key: "o" }}
-            onAction={() => openInHexkitApp("hash.generate", { input }).catch(toastError)}
+            onAction={() =>
+              openInHexkitApp("hash.generate", { input: seed }).catch(toastError)
+            }
           />
         </ActionPanel>
       }
@@ -45,15 +66,13 @@ export default function Command() {
       <Form.TextArea
         id="input"
         title="Text"
-        placeholder="Text to hash"
-        value={input}
-        onChange={setInput}
+        placeholder="Text to hash (or paste here)"
+        defaultValue={seed}
       />
       <Form.Dropdown
         id="algorithm"
         title="Highlight algorithm"
-        value={algorithm}
-        onChange={(v) => setAlgorithm(v as Algorithm)}
+        defaultValue="sha256"
       >
         {ALGORITHMS.map((a) => (
           <Form.Dropdown.Item key={a} value={a} title={a.toUpperCase()} />

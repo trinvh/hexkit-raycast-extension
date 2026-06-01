@@ -76,6 +76,42 @@ it, you can still run `hexkit <action> …` in your terminal and pipe the
 result back into Raycast — the CLI is the authoritative integration
 point.
 
+### `Open in Hexkit` in dev mode
+
+`make dev` runs a raw debug binary that has no `Info.plist`, so macOS
+Launch Services has nothing to register `hexkit://` against — the URL
+scheme literally points to nothing and `open hexkit://…` fails with
+**"The file can't be found."** This isn't a bug we can fix from the
+Raycast side; it's how Launch Services works on macOS.
+
+The fastest workaround lives in the hexkit-devutils Makefile:
+
+```bash
+make dev-bundle    # build + register a debug .app bundle, once
+```
+
+That builds `src-tauri/target/debug/bundle/macos/Hexkit.app`, runs
+`lsregister -f` on it (the manual Launch Services hook), and then
+`open`s it so the OS confirms the registration. From then on,
+`hexkit://` URLs route to that `.app` — including when you iterate
+in `make dev`, with the caveat that the deep link launches the
+**bundled** app (the one with the Info.plist), not the live `make
+dev` instance. The two are different processes; Launch Services has
+no way to deliver a URL to a binary that isn't part of a registered
+bundle.
+
+In practice the workflow looks like:
+
+```bash
+make dev-bundle    # once — registers hexkit://
+make dev           # iterate on UI / Rust code with live reload
+# `hexkit://` URLs open the bundled .app — re-run `make dev-bundle`
+# any time you want the bundled version to reflect new behaviour.
+```
+
+The Raycast extension surfaces the same remediation in its error
+toast if it detects the missing-handler case.
+
 ### Make targets
 
 ```bash
