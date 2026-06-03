@@ -63,6 +63,7 @@
     { "name": "convert-case", "title": "Case Converter", "subtitle": "Hexkit", "description": "Convert text to camelCase, snake_case, kebab-case, …", "mode": "view", "icon": "extension-icon.png" },
     { "name": "convert-color", "title": "Color Converter", "subtitle": "Hexkit", "description": "Convert a color between HEX, RGB, HSL, HSB, HWB and CMYK.", "mode": "view", "icon": "extension-icon.png" },
     { "name": "convert-curl", "title": "cURL → Code", "subtitle": "Hexkit", "description": "Convert a curl command into a code snippet — opens the desktop tool.", "mode": "view", "icon": "extension-icon.png" },
+    { "name": "http-client", "title": "HTTP Client", "subtitle": "Hexkit", "description": "Import a curl command, edit and send the request — opens the desktop tool.", "mode": "view", "icon": "extension-icon.png" },
     { "name": "generate-jsoncode", "title": "JSON → Code (types)", "subtitle": "Hexkit", "description": "Generate type definitions from a JSON sample — opens the desktop tool.", "mode": "view", "icon": "extension-icon.png" },
 
     { "name": "generate-uuid", "title": "Generate ID", "subtitle": "Hexkit", "description": "Generate UUID v4 / v7, ULID or Nano ID.", "mode": "view", "icon": "extension-icon.png" },
